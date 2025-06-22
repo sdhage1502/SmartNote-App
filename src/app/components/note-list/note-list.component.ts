@@ -3,19 +3,17 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotesStore } from '../../stores/notes.store';
 import { Note } from '../../models/note.model';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
-import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule, TooltipModule, DialogModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './note-list.component.html',
   styleUrls: ['./note-list.component.css'],
 })
 export class NoteListComponent implements OnInit {
-  showMobileSearch: boolean = false; // Defined for compatibility, but removed in HTML
+  showDeleteConfirm: boolean = false;
+  noteToDelete: string | null = null;
 
   constructor(
     public store: NotesStore,
@@ -30,8 +28,37 @@ export class NoteListComponent implements OnInit {
     this.router.navigate(['/notes/edit', id]);
   }
 
-  async deleteNote(id: string) {
-    await this.store.deleteNote(id);
+  confirmDelete(id: string) {
+    this.noteToDelete = id;
+    this.showDeleteConfirm = true;
+  }
+
+  async deleteNote() {
+    if (this.noteToDelete) {
+      try {
+        await this.store.deleteNote(this.noteToDelete);
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
+    }
+    this.cancelDelete();
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirm = false;
+    this.noteToDelete = null;
+  }
+
+  createNewNote() {
+    this.router.navigate(['/notes/edit', 'new']);
+  }
+
+  undo() {
+    this.store.undo();
+  }
+
+  redo() {
+    this.store.redo();
   }
 
   trackByNoteId(index: number, note: Note): string {

@@ -3,17 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotesStore } from '../../stores/notes.store';
-import { Note } from '../../models/note.model';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
+import { Note, Conflict } from '../../models/note.model';
 import { Timestamp } from 'firebase/firestore';
 import { interval, Subscription } from 'rxjs';
+import { NoteService } from '../../services/note.service';
 
 @Component({
   selector: 'app-note-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, DialogModule, InputTextModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './note-edit.component.html',
   styleUrls: ['./note-edit.component.css'],
 })
@@ -31,6 +29,7 @@ export class NoteEditComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: NotesStore,
+    private noteService: NoteService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -99,7 +98,7 @@ export class NoteEditComponent implements OnInit, OnDestroy {
         updatedAt: Timestamp.now(),
         version: this.note ? this.note.version + 1 : 1,
       };
-      if (this.noteId && this.noteId !== 'new') {
+      if (this.isEditing) {
         await this.store.updateNote(note);
       } else {
         await this.store.addNote(note);
@@ -107,9 +106,21 @@ export class NoteEditComponent implements OnInit, OnDestroy {
       this.initialTitle = this.title;
       this.initialContent = this.content;
       this.autoSaved = true;
+      setTimeout(() => (this.autoSaved = false), 3000); // Hide auto-saved message after 3s
       this.router.navigate(['/notes']);
-    } catch (error) {
-      console.error('Save failed:', error);
+    } catch (error: any) {
+      if (error.conflict) {
+        const resolvedNote = this.noteService.mergeConflict(error.conflict);
+        await this.store.resolveConflict(error.conflict.noteId, resolvedNote);
+        this.initialTitle = resolvedNote.title;
+        this.initialContent = resolvedNote.content;
+        this.title = resolvedNote.title;
+        this.content = resolvedNote.content;
+        this.autoSaved = true;
+        setTimeout(() => (this.autoSaved = false), 3000);
+      } else {
+        console.error('Save failed:', error);
+      }
     } finally {
       this.isSaving = false;
     }
@@ -138,6 +149,8 @@ export class NoteEditComponent implements OnInit, OnDestroy {
   private checkUnsavedChanges() {
     if (this.hasUnsavedChanges()) {
       this.showUnsavedWarning = true;
+    } else {
+      this.showUnsavedWarning = false;
     }
   }
 
@@ -147,7 +160,7 @@ export class NoteEditComponent implements OnInit, OnDestroy {
 
   private startAutoSave() {
     this.autoSaveSubscription = interval(30000).subscribe(() => {
-      if (this.hasUnsavedChanges()) {
+      if (this.hasUnsavedChanges() && !this.isSaving) {
         this.saveNote();
       }
     });
