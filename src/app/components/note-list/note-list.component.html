@@ -1,0 +1,23 @@
+<div class="space-y-4">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">Your Notes</h2>
+    <div class="space-x-2">
+      <button pButton type="button" label="Undo" icon="pi pi-undo" [disabled]="!store.historyIndex()" (click)="store.undo()" class="p-button-outlined p-button-sm"></button>
+      <button pButton type="button" label="Redo" icon="pi pi-redo" [disabled]="store.historyIndex() >= store.history().length - 1" (click)="store.redo()" class="p-button-outlined p-button-sm"></button>
+      <a pButton type="button" label="New Note" icon="pi pi-plus" routerLink="/notes/edit" class="bg-blue-500 text-white hover:bg-blue-600 p-button-sm"></a>
+    </div>
+  </div>
+  <p class="text-sm text-gray-600">Sync Status: {{ store.syncStatus() }}</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <p-card *ngFor="let note of store.notes()" class="hover:shadow-lg transition-shadow duration-200 cursor-pointer" (click)="editNote(note.id)">
+      <div class="p-4">
+        <h3 class="text-lg font-semibold text-gray-800 truncate">{{ note.title }}</h3>
+        <p class="text-sm text-gray-600 line-clamp-2">{{ note.content }}</p>
+        <div class="mt-4 flex justify-between">
+          <button pButton type="button" icon="pi pi-trash" (click)="deleteNote(note.id); $event.stopPropagation()" class="p-button-text p-button-danger"></button>
+          <span class="text-xs text-gray-500">{{ note.updatedAt.toDate() | date: 'short' }}</span>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

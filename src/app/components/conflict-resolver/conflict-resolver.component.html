@@ -1,0 +1,19 @@
+<p-dialog header="Resolve Conflict" [(visible)]="visible" [modal]="true" [style]="{ width: '90vw', maxWidth: '600px' }">
+  <div *ngIf="store.conflicts().length > 0" class="space-y-4">
+    <p class="text-gray-600">A conflict was detected for the note titled "{{ store.conflicts()[0].localNote.title }}". Choose which version to keep:</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="p-4 bg-gray-50 rounded-md">
+        <h3 class="text-lg font-semibold text-gray-800">Local Version</h3>
+        <p class="text-sm text-gray-600">{{ store.conflicts()[0].localNote.content }}</p>
+        <p class="text-xs text-gray-500 mt-2">Updated: {{ store.conflicts()[0].localNote.updatedAt.toDate() | date: 'short' }}</p>
+        <button pButton type="button" label="Keep Local" (click)="resolveConflict(store.conflicts()[0], store.conflicts()[0].localNote)" class="mt-4 w-full bg-blue-500 text-white hover:bg-blue-600"></button>
+      </div>
+      <div class="p-4 bg-gray-50 rounded-md">
+        <h3 class="text-lg font-semibold text-gray-800">Server Version</h3>
+        <p class="text-sm text-gray-600">{{ store.conflicts()[0].serverNote.content }}</p>
+        <p class="text-xs text-gray-500 mt-2">Updated: {{ store.conflicts()[0].serverNote.updatedAt.toDate() | date: 'short' }}</p>
+        <button pButton type="button" label="Keep Server" (click)="resolveConflict(store.conflicts()[0], store.conflicts()[0].serverNote)" class="mt-4 w-full bg-blue-500 text-white hover:bg-blue-600"></button>
+      </div>
+    </div>
+  </div>
+</p-dialog>

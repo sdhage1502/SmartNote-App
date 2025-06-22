@@ -1,0 +1,33 @@
+@import 'primeng/resources/themes/lara-light-blue/theme.css';
+@import 'primeng/resources/primeng.min.css';
+@import 'primeicons/primeicons.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  @apply bg-gray-100 font-sans text-gray-800;
+}
+
+/* Override PrimeNG button styles */
+.p-button {
+  @apply rounded-md transition-all duration-200;
+}
+.p-button:enabled:hover {
+  @apply bg-blue-600 text-white;
+}
+
+/* Override PrimeNG card styles */
+.p-card {
+  @apply bg-white shadow-md rounded-lg;
+}
+
+/* Override PrimeNG dialog styles */
+.p-dialog .p-dialog-header {
+  @apply bg-blue-500 text-white rounded-t-lg;
+}
+.p-dialog .p-dialog-content {
+  @apply bg-white;
+}
