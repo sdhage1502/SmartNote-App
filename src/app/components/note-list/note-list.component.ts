@@ -1,42 +1,44 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { NotesStore } from '../../stores/notes.store';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { NotesStore } from '../../stores/notes.store';
+import { Note } from '../../models/note.model';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [ButtonModule, CardModule, CommonModule],
+  imports: [CommonModule, RouterModule, ButtonModule, TooltipModule, DialogModule],
   templateUrl: './note-list.component.html',
   styleUrls: ['./note-list.component.css'],
 })
-export class NoteListComponent {
-  store = inject(NotesStore);
-  router = inject(Router);
+export class NoteListComponent implements OnInit {
+  showMobileSearch: boolean = false; // Defined for compatibility, but removed in HTML
+
+  constructor(
+    public store: NotesStore,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.store.loadNotes();
   }
 
   editNote(id: string) {
-    this.router.navigate(['/note', id]);
+    this.router.navigate(['/notes/edit', id]);
   }
 
-  deleteNote(id: string) {
-    this.store.deleteNote(id);
+  async deleteNote(id: string) {
+    await this.store.deleteNote(id);
   }
 
-  addNote() {
-    this.router.navigate(['/note', 'new']);
+  trackByNoteId(index: number, note: Note): string {
+    return note.id;
   }
 
-  undo() {
-    this.store.undo();
-  }
-
-  redo() {
-    this.store.redo();
+  getWordCount(text: string): number {
+    return text.trim().split(/\s+/).filter((word) => word.length > 0).length;
   }
 }

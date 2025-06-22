@@ -6,28 +6,284 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom CSS Variables for theming */
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
+  --secondary-color: #f8fafc;
+  --accent-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
 
+/* Base styles */
 body {
-  @apply bg-gray-100 font-sans text-gray-800;
+  @apply bg-gradient-to-br from-slate-50 to-blue-50 font-sans text-gray-800 antialiased;
+  line-height: 1.6;
 }
 
-/* Override PrimeNG button styles */
+/* Enhanced PrimeNG button styles */
 .p-button {
-  @apply rounded-md transition-all duration-200;
+  @apply rounded-lg transition-all duration-300 font-medium shadow-sm hover:shadow-md;
+  border: none;
+  padding: 0.75rem 1.5rem;
 }
+
 .p-button:enabled:hover {
-  @apply bg-blue-600 text-white;
+  @apply transform hover:-translate-y-0.5;
 }
 
-/* Override PrimeNG card styles */
+.p-button.p-button-sm {
+  @apply px-3 py-2 text-sm;
+}
+
+.p-button:not(.p-button-outlined):not(.p-button-text) {
+  @apply bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700;
+}
+
+.p-button.p-button-outlined {
+  @apply border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white;
+}
+
+.p-button.p-button-text {
+  @apply hover:bg-gray-100 text-gray-600 hover:text-gray-800;
+}
+
+.p-button.p-button-danger {
+  @apply hover:bg-red-50 text-red-500 hover:text-red-600;
+}
+
+.p-button:disabled {
+  @apply opacity-50 cursor-not-allowed hover:transform-none hover:shadow-sm;
+}
+
+/* Enhanced PrimeNG card styles */
 .p-card {
-  @apply bg-white shadow-md rounded-lg;
+  @apply bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden;
+  transition: all 0.3s ease;
 }
 
-/* Override PrimeNG dialog styles */
-.p-dialog .p-dialog-header {
-  @apply bg-blue-500 text-white rounded-t-lg;
+.p-card:hover {
+  @apply shadow-lg;
 }
+
+.p-card .p-card-body {
+  @apply p-0;
+}
+
+.p-card .p-card-content {
+  @apply p-6;
+}
+
+/* Enhanced PrimeNG dialog styles */
+.p-dialog {
+  @apply rounded-xl overflow-hidden shadow-2xl;
+}
+
+.p-dialog .p-dialog-header {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4;
+}
+
 .p-dialog .p-dialog-content {
-  @apply bg-white;
+  @apply bg-white p-6;
+}
+
+.p-dialog .p-dialog-footer {
+  @apply bg-gray-50 px-6 py-4 border-t border-gray-200;
+}
+
+/* Form elements */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+textarea {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+}
+
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="password"]:focus, 
+textarea:focus {
+  @apply outline-none shadow-sm;
+}
+
+/* Custom utility classes */
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.note-card {
+  @apply bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer;
+}
+
+.note-card:hover {
+  @apply transform hover:-translate-y-1 border-blue-200;
+}
+
+.header-gradient {
+  @apply bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600;
+}
+
+.text-gradient {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-300;
+}
+
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-300;
+}
+
+.status-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.status-badge.online {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-badge.offline {
+  @apply bg-red-100 text-red-800;
+}
+
+.status-badge.syncing {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+/* Animation classes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .p-dialog {
+    @apply m-4;
+    width: calc(100vw - 2rem) !important;
+    max-width: none !important;
+  }
+  
+  .p-card {
+    @apply mx-2;
+  }
+  
+  .mobile-padding {
+    @apply px-4 py-2;
+  }
+  
+  .mobile-text {
+    @apply text-sm;
+  }
+  
+  .mobile-button {
+    @apply w-full mb-2;
+  }
+  
+  .mobile-grid {
+    @apply grid-cols-1;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+    --border-color: #374151;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-gray-900 to-blue-900 text-gray-100;
+  }
+  
+  .p-card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  input[type="text"], 
+  input[type="email"], 
+  input[type="password"], 
+  textarea {
+    @apply bg-gray-700 border-gray-600 text-gray-100 focus:border-blue-400;
+  }
+}
+
+/* Loading states */
+.loading-skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+.loading-skeleton.dark {
+  @apply bg-gray-700;
+}
+
+/* Responsive typography */
+.responsive-title {
+  @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+}
+
+.responsive-subtitle {
+  @apply text-lg md:text-xl font-semibold;
+}
+
+.responsive-body {
+  @apply text-sm md:text-base;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
 }

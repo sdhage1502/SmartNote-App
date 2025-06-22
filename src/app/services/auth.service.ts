@@ -1,49 +1,27 @@
 import { Injectable } from '@angular/core';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, Auth, User, signOut } from 'firebase/auth';
-import { environment } from '../../environments/environment';
-import { BehaviorSubject } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
-  private auth: Auth;
-  private userSubject = new BehaviorSubject<User | null>(null);
+  user$: Observable<any>;
 
-  constructor() {
-    try {
-      const app = initializeApp(environment.firebase);
-      this.auth = getAuth(app);
-      this.auth.onAuthStateChanged(
-        (user) => this.userSubject.next(user),
-        (error) => console.error('Auth state change error:', error)
-      );
-    } catch (error) {
-      console.error('Firebase initialization failed:', error);
-      throw error;
-    }
+  constructor(private auth: AngularFireAuth) {
+    this.user$ = this.auth.user;
   }
 
-  async signInAnonymously() {
-    try {
-      const { user } = await signInAnonymously(this.auth);
-      return user;
-    } catch (error) {
-      console.error('Anonymous login failed:', error);
-      throw error;
-    }
+  async signInAnonymously(): Promise<void> {
+    await this.auth.signInAnonymously();
   }
 
-  async signOut() {
-    try {
-      await signOut(this.auth);
-      this.userSubject.next(null);
-    } catch (error) {
-      console.error('Sign out failed:', error);
-      throw error;
-    }
+  async signOut(): Promise<void> {
+    await this.auth.signOut();
   }
 
-  get currentUser() {
-    return this.userSubject.asObservable();
+  isAuthenticated(): Observable<boolean> {
+    return this.user$.pipe(map((user) => !!user));
   }
 }

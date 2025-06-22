@@ -1,9 +1,63 @@
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-  <p-card class="w-full max-w-md p-6">
-    <div class="text-center">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to SmartNote</h2>
-      <p class="text-gray-600 mb-6">Sign in anonymously to start taking notes.</p>
-      <button pButton type="button" label="Sign In Anonymously" icon="pi pi-user" (click)="login()" class="w-full bg-blue-500 text-white hover:bg-blue-600"></button>
+<section class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4">
+  <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+    
+    <!-- Left Panel -->
+    <div class="md:w-1/2 bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-8 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center space-x-3 mb-6">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 20h9"></path>
+          </svg>
+          <div>
+            <h1 class="text-2xl font-bold">SmartNote</h1>
+            <p class="text-sm">Your intelligent note-taking companion</p>
+          </div>
+        </div>
+        <ul class="space-y-4 text-sm">
+          <li class="flex items-center"><span class="mr-2">☁️</span> Cloud sync across devices</li>
+          <li class="flex items-center"><span class="mr-2">🔒</span> Secure & private storage</li>
+          <li class="flex items-center"><span class="mr-2">📱</span> Mobile-friendly design</li>
+          <li class="flex items-center"><span class="mr-2">🕒</span> Version history</li>
+        </ul>
+      </div>
+      <p class="text-xs opacity-75 mt-4">More features coming soon</p>
     </div>
-  </p-card>
-</div>
+
+    <!-- Right Panel -->
+    <div class="md:w-1/2 p-8 flex flex-col justify-center">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+      <p class="text-gray-600 mb-6">
+        Start taking notes instantly. No signup required — just one click.
+      </p>
+
+      <div *ngIf="errorMessage" class="text-red-600 text-sm mb-4">
+        {{ errorMessage }}
+      </div>
+
+      <button
+        class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-lg flex items-center justify-center"
+        [disabled]="isLoading"
+        (click)="signIn()"
+      >
+        <ng-container *ngIf="!isLoading; else loading">
+          Get Started
+        </ng-container>
+        <ng-template #loading>
+          <svg class="animate-spin h-5 w-5 mr-2 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10"
+              stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Signing In...
+        </ng-template>
+      </button>
+
+      <div class="mt-8 text-center text-sm text-gray-500">
+        <strong>Privacy First:</strong> Anonymous sign-in means no personal data is collected. Your notes are yours only.
+      </div>
+    </div>
+  </div>
+</section>

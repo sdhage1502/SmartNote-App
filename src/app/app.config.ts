@@ -1,18 +1,36 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { appRoutes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { environment } from '../environments/environment';
+import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
+import { provideFirestore, initializeFirestore, enableIndexedDbPersistence } from '@angular/fire/firestore';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+
+import { routes } from './app.routes';
+import { firebaseConfig } from '../environments/environment';
+import { NotesStore } from './stores/notes.store';
+import { NoteService } from './services/note.service';
+import { AuthService } from './services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(appRoutes),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
     provideAnimations(),
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
+    { provide: FIREBASE_OPTIONS, useValue: firebaseConfig.firebase },
+    provideFirebaseApp(() => initializeApp(firebaseConfig.firebase)),
+    provideFirestore(() => {
+      const firestore = initializeFirestore(getApp(), {
+        experimentalAutoDetectLongPolling: true,
+      });
+      enableIndexedDbPersistence(firestore).catch(err =>
+        console.error('Offline persistence error:', err)
+      );
+      return firestore;
+    }),
+    provideAuth(() => getAuth(getApp())),
+    NotesStore,
+    NoteService,
+    AuthService,
   ],
 };

@@ -7,6 +7,9 @@ import { authGuard } from './services/auth.guard';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'notes', component: NoteListComponent, canActivate: [authGuard] },
+  { path: 'note/new', component: NoteEditComponent, canActivate: [authGuard] },
   { path: 'note/:id', component: NoteEditComponent, canActivate: [authGuard] },
+  { path: 'notes/edit', redirectTo: 'note/new', pathMatch: 'full' }, // added
   { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/notes' }, // wildcard to prevent crash
 ];
