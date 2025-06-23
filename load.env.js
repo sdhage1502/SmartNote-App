@@ -21,6 +21,10 @@ const firebase = {
 
 const writeEnvFile = (targetPath, isProd) => {
   const content = `export const environment = ${JSON.stringify({ production: isProd, firebase }, null, 2)};\n`;
+  const dir = path.dirname(targetPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
   fs.writeFileSync(targetPath, content);
 };
 
