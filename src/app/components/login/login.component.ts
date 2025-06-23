@@ -20,12 +20,13 @@ export class LoginComponent {
   ) {}
 
   async signIn() {
+    this.errorMessage = ''; // Clear previous error
     this.isLoading = true;
     try {
       await this.authService.signInAnonymously();
-      this.router.navigate(['/notes']);
+      await this.router.navigate(['/notes']);
     } catch (error: any) {
-      this.errorMessage = error.message;
+      this.errorMessage = error?.message || 'Sign in failed. Please try again.';
     } finally {
       this.isLoading = false;
     }

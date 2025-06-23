@@ -1,0 +1,47 @@
+:host {
+    display: block;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-family: Arial, sans-serif;
+}
+
+.conflict-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.conflict-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+
+.conflict-item {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.conflict-actions button {
+    margin-left: 8px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background: #1976d2;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.conflict-actions button:hover {
+    background: #1565c0;
+}

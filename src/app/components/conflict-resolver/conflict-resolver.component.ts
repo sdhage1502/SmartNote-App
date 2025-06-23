@@ -2,15 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotesStore } from '../../stores/notes.store';
 import { NoteService } from '../../services/note.service';
-import { Note, Conflict } from '../../models/note.model';
+import { Note } from '../../models/note.model';
+import { NgModule } from '@angular/core';
+
+import { FormsModule } from '@angular/forms';
 import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-conflict-resolver',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './conflict-resolver.component.html',
-  styleUrls: ['./conflict-resolver.component.css'],
+  // styleUrls: ['./conflict-resolver.component.css'],
 })
 export class ConflictResolverComponent implements OnInit {
   mergedContent: string = '';

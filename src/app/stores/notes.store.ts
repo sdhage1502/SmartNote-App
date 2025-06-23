@@ -1,7 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { NoteService } from '../services/note.service';
 import { Note, Conflict } from '../models/note.model';
-import { Timestamp } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class NotesStore {
@@ -13,14 +12,16 @@ export class NotesStore {
 
   constructor(private noteService: NoteService) {
     this.noteService.listenForNotes().subscribe({
-      next: (notes) => {
+      next: (notes: Note[]) => {
         if (!notes) {
           this._notes.set([]);
           return;
         }
+
         this._notes.set(notes);
+
         this._notes().forEach((localNote) => {
-          const serverNote = notes.find((n) => n.id === localNote.id);
+          const serverNote = notes.find((n: Note) => n.id === localNote.id);
           if (serverNote && serverNote.version > localNote.version) {
             const conflict: Conflict = {
               noteId: localNote.id,
@@ -32,10 +33,11 @@ export class NotesStore {
             }
           }
         });
+
         this._syncStatus.set('synced');
         this.addToHistory();
       },
-      error: (error) => {
+      error: (error: any) => {
         this._syncStatus.set('error');
         console.error('Error listening for notes:', error);
       },
@@ -141,7 +143,7 @@ export class NotesStore {
     this._history.update((history) => {
       const newHistory = history.slice(0, this._historyIndex() + 1);
       newHistory.push([...this._notes()]);
-      return newHistory.slice(-50); // Limit history to 50 entries
+      return newHistory.slice(-50);
     });
     this._historyIndex.update((i) => i + 1);
   }

@@ -3,8 +3,8 @@ import { CommonModule, NgFor, NgIf, SlicePipe, DatePipe } from '@angular/common'
 import { Router, RouterModule } from '@angular/router';
 import { NotesStore } from '../../stores/notes.store';
 import { Note } from '../../models/note.model';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { first } from 'rxjs/operators';
+import { Auth, user } from '@angular/fire/auth';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-note-list',
@@ -17,7 +17,7 @@ export class NoteListComponent implements OnInit {
   constructor(
     public store: NotesStore,
     private router: Router,
-    private auth: AngularFireAuth
+    private auth: Auth // Use modular Auth
   ) {}
 
   ngOnInit() {
@@ -27,8 +27,8 @@ export class NoteListComponent implements OnInit {
   async createNote() {
     try {
       console.log('Create note button clicked'); // Debug log
-      const user = await this.auth.user.pipe(first()).toPromise();
-      if (!user) {
+      const currentUser = await firstValueFrom(user(this.auth));
+      if (!currentUser) {
         console.warn('User not authenticated, redirecting to login');
         await this.router.navigate(['/login']);
         return;

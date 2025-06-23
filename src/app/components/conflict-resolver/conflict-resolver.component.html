@@ -3,14 +3,16 @@
     <!-- Header -->
     <header class="mb-8">
       <h1 class="text-2xl sm:text-3xl font-light text-black mb-2">Sync Conflict</h1>
-      <p class="text-gray-600 max-w-2xl">
-        The note "{{ store.conflicts()[0]?.localNote.title }}" has been modified on multiple devices.
-        Choose a version to keep or merge changes manually.
-      </p>
+      <ng-container *ngIf="store.conflicts().length > 0">
+        <p class="text-gray-600 max-w-2xl">
+          The note "{{ store.conflicts()[0].localNote.title }}" has been modified on multiple devices.
+          Choose a version to keep or merge changes manually.
+        </p>
+      </ng-container>
     </header>
 
     <!-- Version Comparison -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
+    <div *ngIf="store.conflicts().length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
       <!-- Local Version -->
       <div class="border border-gray-200 bg-white">
         <div class="border-b border-gray-200 p-4 sm:p-6">
@@ -18,14 +20,14 @@
             <h2 class="text-lg font-medium text-black">Local Version</h2>
             <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1">LOCAL</span>
           </div>
-          <div class="text-sm text-gray-500 space-y-1">
-            <p>{{ store.conflicts()[0]?.localNote.updatedAt.toDate() | date:'MMM d, y, h:mm a' }}</p>
-            <p>{{ getWordCount(store.conflicts()[0]?.localNote.content) }} words</p>
-          </div>
+          <ng-container *ngIf="store.conflicts().length > 0">
+            <p>{{ store.conflicts()[0].localNote.updatedAt.toDate() | date:'MMM d, y, h:mm a' }}</p>
+            <p>{{ getWordCount(store.conflicts()[0].localNote.content) }} words</p>
+          </ng-container>
         </div>
         <div class="p-4 sm:p-6">
           <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
-            {{ store.conflicts()[0]?.localNote.content }}
+            {{ store.conflicts()[0].localNote.content }}
           </div>
         </div>
         <div class="border-t border-gray-200 p-4 sm:p-6">
@@ -45,14 +47,14 @@
             <h2 class="text-lg font-medium text-black">Server Version</h2>
             <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1">SERVER</span>
           </div>
-          <div class="text-sm text-gray-500 space-y-1">
-            <p>{{ store.conflicts()[0]?.serverNote.updatedAt.toDate() | date:'MMM d, y, h:mm a' }}</p>
-            <p>{{ getWordCount(store.conflicts()[0]?.serverNote.content) }} words</p>
-          </div>
+          <ng-container *ngIf="store.conflicts().length > 0">
+            <p>{{ store.conflicts()[0].serverNote.updatedAt.toDate() | date:'MMM d, y, h:mm a' }}</p>
+            <p>{{ getWordCount(store.conflicts()[0].serverNote.content) }} words</p>
+          </ng-container>
         </div>
         <div class="p-4 sm:p-6">
           <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
-            {{ store.conflicts()[0]?.serverNote.content }}
+            {{ store.conflicts()[0].serverNote.content }}
           </div>
         </div>
         <div class="border-t border-gray-200 p-4 sm:p-6">
@@ -103,7 +105,10 @@
             placeholder="Merge both versions here..."
           ></textarea>
           <p class="text-sm text-gray-500 mt-2 flex items-center">
-            <i class="pi pi-file mr-2"></i>
+            <!-- Heroicons outline document icon SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7V3a1 1 0 011-1h8a1 1 0 011 1v18a1 1 0 01-1 1H8a1 1 0 01-1-1v-4m0 0H5a2 2 0 01-2-2V7a2 2 0 012-2h2m0 0V3m0 4h8" />
+            </svg>
             {{ getWordCount(mergedContent) }} words
           </p>
         </div>
