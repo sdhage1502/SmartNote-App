@@ -3,15 +3,12 @@ import { CommonModule } from '@angular/common';
 import { NotesStore } from '../../stores/notes.store';
 import { NoteService } from '../../services/note.service';
 import { Note, Conflict } from '../../models/note.model';
-import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-conflict-resolver',
   standalone: true,
-  imports: [CommonModule, DialogModule, ButtonModule, InputTextareaModule],
+  imports: [CommonModule],
   templateUrl: './conflict-resolver.component.html',
   styleUrls: ['./conflict-resolver.component.css'],
 })

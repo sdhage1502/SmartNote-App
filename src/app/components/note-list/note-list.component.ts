@@ -1,64 +1,57 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf, SlicePipe, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotesStore } from '../../stores/notes.store';
 import { Note } from '../../models/note.model';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NgFor, NgIf, SlicePipe, DatePipe],
   templateUrl: './note-list.component.html',
   styleUrls: ['./note-list.component.css'],
 })
 export class NoteListComponent implements OnInit {
-  showDeleteConfirm: boolean = false;
-  noteToDelete: string | null = null;
-
   constructor(
     public store: NotesStore,
-    private router: Router
+    private router: Router,
+    private auth: AngularFireAuth
   ) {}
 
   ngOnInit() {
     this.store.loadNotes();
   }
 
-  editNote(id: string) {
-    this.router.navigate(['/notes/edit', id]);
-  }
-
-  confirmDelete(id: string) {
-    this.noteToDelete = id;
-    this.showDeleteConfirm = true;
-  }
-
-  async deleteNote() {
-    if (this.noteToDelete) {
-      try {
-        await this.store.deleteNote(this.noteToDelete);
-      } catch (error) {
-        console.error('Delete failed:', error);
+  async createNote() {
+    try {
+      console.log('Create note button clicked'); // Debug log
+      const user = await this.auth.user.pipe(first()).toPromise();
+      if (!user) {
+        console.warn('User not authenticated, redirecting to login');
+        await this.router.navigate(['/login']);
+        return;
       }
+      await this.router.navigate(['/note/new']);
+      console.log('Navigated to /note/new'); // Debug log
+    } catch (error) {
+      console.error('Failed to navigate to create note:', error);
     }
-    this.cancelDelete();
   }
 
-  cancelDelete() {
-    this.showDeleteConfirm = false;
-    this.noteToDelete = null;
+  editNote(id: string) {
+    this.router.navigate(['/note', id]).catch((error) => {
+      console.error('Failed to navigate to edit note:', error);
+    });
   }
 
-  createNewNote() {
-    this.router.navigate(['/notes/edit', 'new']);
-  }
-
-  undo() {
-    this.store.undo();
-  }
-
-  redo() {
-    this.store.redo();
+  async deleteNote(id: string) {
+    try {
+      await this.store.deleteNote(id);
+    } catch (error) {
+      console.error('Failed to delete note:', error);
+    }
   }
 
   trackByNoteId(index: number, note: Note): string {

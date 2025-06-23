@@ -1,49 +1,54 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Firestore, collection, doc, setDoc, getDoc, deleteDoc, collectionData } from '@angular/fire/firestore';
+import { Auth, user } from '@angular/fire/auth';
 import { Observable, of } from 'rxjs';
-import { first, map, switchMap } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 import { Note, Conflict } from '../models/note.model';
-import { Timestamp } from 'firebase/firestore';
-import firebase from 'firebase/compat/app';
+import { Timestamp } from '@firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NoteService {
-  private notesCollection: AngularFirestoreCollection<Note> | null = null;
+  private notesCollectionPath: string | null = null;
 
   constructor(
-    private afs: AngularFirestore,
-    private auth: AngularFireAuth
+    private firestore: Firestore,
+    private auth: Auth
   ) {
-    // Enable Firestore offline persistence
-    this.afs.firestore.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-      console.error('Failed to enable offline persistence:', err);
+    user(this.auth).subscribe((user) => {
+      if (user) {
+        this.notesCollectionPath = `users/${user.uid}/notes`;
+      } else {
+        this.notesCollectionPath = null;
+      }
     });
 
-    this.auth.user.subscribe((user) => {
-      if (user) {
-        this.notesCollection = this.afs.collection<Note>(`users/${user.uid}/notes`);
-      }
+    // Enable offline persistence
+    import('@firebase/firestore').then(({ enableMultiTabIndexedDbPersistence }) => {
+      enableMultiTabIndexedDbPersistence(this.firestore).catch((err) => {
+        console.error('Failed to enable offline persistence:', err);
+      });
     });
   }
 
   async getNotes(): Promise<Note[]> {
-    return this.auth.user.pipe(
-      switchMap((user) => {
-        if (!user || !this.notesCollection) return of([]);
-        return this.notesCollection
-          .valueChanges({ idField: 'id' })
-          .pipe(map((notes: Note[]) => notes));
-      }),
-      first()
-    ).toPromise() as Promise<Note[]>;
+    const currentUser = await user(this.auth).pipe(first()).toPromise();
+    if (!currentUser || !this.notesCollectionPath) {
+      return [];
+    }
+    const notesCol = collection(this.firestore, this.notesCollectionPath);
+    const notes = await collectionData(notesCol, { idField: 'id' })
+      .pipe(first())
+      .toPromise();
+    return (notes as Note[]) || [];
   }
 
   async addNote(note: Note): Promise<Note> {
-    if (!this.notesCollection) throw new Error('User not authenticated');
-    const id = this.afs.createId();
+    if (!this.notesCollectionPath) {
+      throw new Error('User not authenticated');
+    }
+    const id = doc(collection(this.firestore, this.notesCollectionPath)).id;
     const newNote: Note = {
       ...note,
       id,
@@ -51,7 +56,7 @@ export class NoteService {
       version: note.version || 1,
     };
     try {
-      await this.notesCollection.doc(id).set(newNote);
+      await setDoc(doc(this.firestore, `${this.notesCollectionPath}/${id}`), newNote);
       return newNote;
     } catch (error) {
       console.error('Add note failed:', error);
@@ -60,12 +65,12 @@ export class NoteService {
   }
 
   async updateNote(note: Note): Promise<void> {
-    if (!this.notesCollection) throw new Error('User not authenticated');
+    if (!this.notesCollectionPath) {
+      throw new Error('User not authenticated');
+    }
     try {
-      const existingNote = (await this.notesCollection
-        .doc(note.id)
-        .get()
-        .toPromise())?.data() as Note | undefined;
+      const noteRef = doc(this.firestore, `${this.notesCollectionPath}/${note.id}`);
+      const existingNote = (await getDoc(noteRef)).data() as Note | undefined;
 
       if (existingNote && existingNote.version > note.version) {
         const conflict: Conflict = {
@@ -76,7 +81,7 @@ export class NoteService {
         throw { conflict };
       }
 
-      await this.notesCollection.doc(note.id).set({
+      await setDoc(noteRef, {
         ...note,
         updatedAt: Timestamp.now(),
         version: note.version + 1,
@@ -88,9 +93,11 @@ export class NoteService {
   }
 
   async deleteNote(id: string): Promise<void> {
-    if (!this.notesCollection) throw new Error('User not authenticated');
+    if (!this.notesCollectionPath) {
+      throw new Error('User not authenticated');
+    }
     try {
-      await this.notesCollection.doc(id).delete();
+      await deleteDoc(doc(this.firestore, `${this.notesCollectionPath}/${id}`));
     } catch (error) {
       console.error('Delete note failed:', error);
       throw error;
@@ -98,10 +105,13 @@ export class NoteService {
   }
 
   listenForNotes(): Observable<Note[]> {
-    return this.auth.user.pipe(
-      switchMap((user) => {
-        if (!user || !this.notesCollection) return of([]);
-        return this.notesCollection.valueChanges({ idField: 'id' });
+    return user(this.auth).pipe(
+      switchMap((currentUser) => {
+        if (!currentUser || !this.notesCollectionPath) {
+          return of([]);
+        }
+        const notesCol = collection(this.firestore, this.notesCollectionPath);
+        return collectionData(notesCol, { idField: 'id' }) as Observable<Note[]>;
       })
     );
   }

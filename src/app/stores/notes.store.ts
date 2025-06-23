@@ -11,7 +11,36 @@ export class NotesStore {
   private _history = signal<Note[][]>([]);
   private _historyIndex = signal(-1);
 
-  constructor(private noteService: NoteService) {}
+  constructor(private noteService: NoteService) {
+    this.noteService.listenForNotes().subscribe({
+      next: (notes) => {
+        if (!notes) {
+          this._notes.set([]);
+          return;
+        }
+        this._notes.set(notes);
+        this._notes().forEach((localNote) => {
+          const serverNote = notes.find((n) => n.id === localNote.id);
+          if (serverNote && serverNote.version > localNote.version) {
+            const conflict: Conflict = {
+              noteId: localNote.id,
+              localNote,
+              serverNote,
+            };
+            if (!this._conflicts().some((c) => c.noteId === localNote.id)) {
+              this._conflicts.update((conflicts) => [...conflicts, conflict]);
+            }
+          }
+        });
+        this._syncStatus.set('synced');
+        this.addToHistory();
+      },
+      error: (error) => {
+        this._syncStatus.set('error');
+        console.error('Error listening for notes:', error);
+      },
+    });
+  }
 
   notes = this._notes.asReadonly();
   syncStatus = this._syncStatus.asReadonly();
@@ -23,23 +52,26 @@ export class NotesStore {
     this._syncStatus.set('syncing');
     try {
       const notes = await this.noteService.getNotes();
-      this._notes.set(notes);
+      this._notes.set(notes || []);
       this._syncStatus.set('synced');
       this.addToHistory();
     } catch (error) {
       this._syncStatus.set('error');
+      throw error;
     }
   }
 
-  async addNote(note: Note) {
+  async addNote(note: Note): Promise<string> {
     this._syncStatus.set('syncing');
     try {
       const newNote = await this.noteService.addNote(note);
       this._notes.update((notes) => [...notes, newNote]);
       this._syncStatus.set('synced');
       this.addToHistory();
+      return newNote.id;
     } catch (error) {
       this._syncStatus.set('error');
+      throw error;
     }
   }
 
@@ -52,8 +84,13 @@ export class NotesStore {
       );
       this._syncStatus.set('synced');
       this.addToHistory();
-    } catch (error) {
+    } catch (error: any) {
+      if (error.conflict) {
+        this._conflicts.update((conflicts) => [...conflicts, error.conflict]);
+        throw new Error('Conflict detected');
+      }
       this._syncStatus.set('error');
+      throw error;
     }
   }
 
@@ -66,6 +103,7 @@ export class NotesStore {
       this.addToHistory();
     } catch (error) {
       this._syncStatus.set('error');
+      throw error;
     }
   }
 
@@ -81,6 +119,7 @@ export class NotesStore {
       this.addToHistory();
     } catch (error) {
       console.error('Conflict resolution failed:', error);
+      throw error;
     }
   }
 

@@ -1,0 +1,5 @@
+/* Minimal custom CSS as Tailwind handles most styling */
+textarea {
+  min-height: 200px;
+  resize: vertical;
+}

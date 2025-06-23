@@ -1,42 +1,46 @@
-<header class="header-gradient text-white py-4">
+<header class="bg-black text-white py-3 border-b border-gray-200">
   <div class="container mx-auto px-4 flex justify-between items-center">
-    <a routerLink="/" class="flex items-center space-x-2">
-      <i class="pi pi-book text-2xl"></i>
+    <a routerLink="/" class="flex items-center space-x-3">
+      <div class="w-8 h-8 bg-white text-black rounded flex items-center justify-center">
+        <i class="pi pi-book text-lg"></i>
+      </div>
       <div>
-        <h1 class="text-xl font-bold">SmartNote</h1>
-        <p class="text-xs">Your intelligent note-taking companion</p>
+        <h1 class="text-lg font-semibold">SmartNote</h1>
+        <p class="text-xs text-gray-300">Intelligent note-taking</p>
       </div>
     </a>
     <nav class="flex items-center space-x-4">
       @if (isOnline$ | async) {
-        <span class="text-sm flex items-center">
+        <span class="text-sm flex items-center text-gray-300">
           <i class="pi pi-wifi mr-1"></i>
           Online
         </span>
       }
-      <div class="flex items-center space-x-2">
-        <p-avatar
-          [label]="(userName$ | async)?.charAt(0)"
-          styleClass="bg-gray-200 text-gray-800"
-          shape="circle"
-        ></p-avatar>
-        <span class="text-sm">{{ userName$ | async }}</span>
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-medium">
+          {{ (userName$ | async)?.charAt(0) }}
+        </div>
+        <span class="text-sm hidden sm:inline">{{ userName$ | async }}</span>
         <button
-          pButton
-          type="button"
-          icon="pi pi-sign-out"
           (click)="signOut()"
-          class="p-button-text text-white"
-        ></button>
+          class="p-2 hover:bg-gray-800 rounded transition-colors"
+          title="Sign Out"
+        >
+          <i class="pi pi-sign-out text-sm"></i>
+        </button>
       </div>
     </nav>
   </div>
 </header>
-<main class="flex-grow">
+
+<main class="flex-grow min-h-screen bg-white">
   <router-outlet></router-outlet>
 </main>
-<footer class="bg-gray-800 text-gray-300 py-4 text-center">
-  <p class="text-sm">
-    © 2024 SmartNote. Built with Angular & PrimeNG.
-  </p>
+
+<footer class="bg-black text-white py-3 border-t border-gray-200">
+  <div class="container mx-auto px-4 text-center">
+    <p class="text-sm text-gray-300">
+      © 2024 SmartNote. Built with Angular & Tailwind CSS.
+    </p>
+  </div>
 </footer>

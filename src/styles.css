@@ -6,74 +6,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS Variables for theming */
+/* Minimal Black & White Theme Variables */
 :root {
-  --primary-color: #3b82f6;
-  --primary-dark: #2563eb;
-  --primary-light: #60a5fa;
-  --secondary-color: #f8fafc;
-  --accent-color: #10b981;
-  --danger-color: #ef4444;
-  --warning-color: #f59e0b;
-  --text-primary: #1f2937;
+  --primary-color: #000000;
+  --primary-dark: #1f2937;
+  --primary-light: #6b7280;
+  --secondary-color: #ffffff;
+  --text-primary: #000000;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
   --border-color: #e5e7eb;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
 /* Base styles */
 body {
-  @apply bg-gradient-to-br from-slate-50 to-blue-50 font-sans text-gray-800 antialiased;
+  @apply bg-white font-sans text-black antialiased;
   line-height: 1.6;
 }
 
-/* Enhanced PrimeNG button styles */
+/* Minimal PrimeNG overrides */
 .p-button {
-  @apply rounded-lg transition-all duration-300 font-medium shadow-sm hover:shadow-md;
+  @apply transition-all duration-200 font-medium;
   border: none;
-  padding: 0.75rem 1.5rem;
-}
-
-.p-button:enabled:hover {
-  @apply transform hover:-translate-y-0.5;
-}
-
-.p-button.p-button-sm {
-  @apply px-3 py-2 text-sm;
+  padding: 0.5rem 1rem;
 }
 
 .p-button:not(.p-button-outlined):not(.p-button-text) {
-  @apply bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700;
+  @apply bg-black text-white hover:bg-gray-800;
 }
 
 .p-button.p-button-outlined {
-  @apply border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white;
+  @apply border border-gray-300 text-gray-600 hover:border-black hover:text-black bg-white;
 }
 
 .p-button.p-button-text {
-  @apply hover:bg-gray-100 text-gray-600 hover:text-gray-800;
-}
-
-.p-button.p-button-danger {
-  @apply hover:bg-red-50 text-red-500 hover:text-red-600;
+  @apply hover:bg-gray-100 text-gray-600 hover:text-black bg-transparent;
 }
 
 .p-button:disabled {
-  @apply opacity-50 cursor-not-allowed hover:transform-none hover:shadow-sm;
+  @apply opacity-50 cursor-not-allowed;
 }
 
-/* Enhanced PrimeNG card styles */
+/* Minimal card styles */
 .p-card {
-  @apply bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden;
-  transition: all 0.3s ease;
-}
-
-.p-card:hover {
-  @apply shadow-lg;
+  @apply bg-white border border-gray-200 overflow-hidden;
 }
 
 .p-card .p-card-body {
@@ -84,13 +65,13 @@ body {
   @apply p-6;
 }
 
-/* Enhanced PrimeNG dialog styles */
+/* Dialog overrides */
 .p-dialog {
-  @apply rounded-xl overflow-hidden shadow-2xl;
+  @apply border border-gray-200;
 }
 
 .p-dialog .p-dialog-header {
-  @apply bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4;
+  @apply bg-black text-white px-6 py-4;
 }
 
 .p-dialog .p-dialog-content {
@@ -106,65 +87,37 @@ input[type="text"],
 input[type="email"], 
 input[type="password"], 
 textarea {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+  @apply w-full px-3 py-2 border border-gray-300 text-black focus:outline-none focus:border-black transition-colors duration-200 bg-white;
 }
 
-input[type="text"]:focus, 
-input[type="email"]:focus, 
-input[type="password"]:focus, 
-textarea:focus {
-  @apply outline-none shadow-sm;
+textarea {
+  @apply resize-none;
 }
 
-/* Custom utility classes */
-.glass-effect {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.note-card {
-  @apply bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer;
-}
-
-.note-card:hover {
-  @apply transform hover:-translate-y-1 border-blue-200;
-}
-
-.header-gradient {
-  @apply bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600;
-}
-
-.text-gradient {
-  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
-}
-
+/* Utility classes */
 .btn-primary {
-  @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5;
+  @apply bg-black text-white font-medium px-6 py-2 hover:bg-gray-800 transition-colors;
 }
 
 .btn-secondary {
-  @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-300;
+  @apply bg-white text-gray-600 border border-gray-300 font-medium px-6 py-2 hover:border-black hover:text-black transition-colors;
 }
 
 .btn-danger {
-  @apply bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-300;
+  @apply bg-white text-gray-600 border border-gray-300 font-medium px-4 py-2 hover:border-black hover:text-black transition-colors;
 }
 
+/* Status indicators */
 .status-badge {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  @apply inline-flex items-center px-2 py-1 text-xs font-medium;
 }
 
 .status-badge.online {
-  @apply bg-green-100 text-green-800;
+  @apply bg-gray-100 text-gray-800;
 }
 
 .status-badge.offline {
-  @apply bg-red-100 text-red-800;
-}
-
-.status-badge.syncing {
-  @apply bg-yellow-100 text-yellow-800;
+  @apply bg-gray-100 text-gray-800;
 }
 
 /* Animation classes */
@@ -173,26 +126,8 @@ textarea:focus {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
-}
-
-.animate-slide-in {
-  animation: slideIn 0.3s ease-out;
-}
-
-.animate-pulse {
-  animation: pulse 2s infinite;
 }
 
 /* Mobile-specific styles */
@@ -203,72 +138,14 @@ textarea:focus {
     max-width: none !important;
   }
   
-  .p-card {
-    @apply mx-2;
-  }
-  
-  .mobile-padding {
-    @apply px-4 py-2;
-  }
-  
-  .mobile-text {
-    @apply text-sm;
-  }
-  
-  .mobile-button {
-    @apply w-full mb-2;
-  }
-  
-  .mobile-grid {
-    @apply grid-cols-1;
-  }
-}
-
-/* Dark mode support (optional) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text-primary: #f9fafb;
-    --text-secondary: #d1d5db;
-    --text-muted: #9ca3af;
-    --border-color: #374151;
-  }
-  
-  body {
-    @apply bg-gradient-to-br from-gray-900 to-blue-900 text-gray-100;
-  }
-  
-  .p-card {
-    @apply bg-gray-800 border-gray-700;
-  }
-  
-  input[type="text"], 
-  input[type="email"], 
-  input[type="password"], 
-  textarea {
-    @apply bg-gray-700 border-gray-600 text-gray-100 focus:border-blue-400;
+  .mobile-stack {
+    @apply flex-col space-y-2 space-x-0;
   }
 }
 
 /* Loading states */
 .loading-skeleton {
-  @apply animate-pulse bg-gray-200 rounded;
-}
-
-.loading-skeleton.dark {
-  @apply bg-gray-700;
-}
-
-/* Responsive typography */
-.responsive-title {
-  @apply text-2xl md:text-3xl lg:text-4xl font-bold;
-}
-
-.responsive-subtitle {
-  @apply text-lg md:text-xl font-semibold;
-}
-
-.responsive-body {
-  @apply text-sm md:text-base;
+  @apply animate-pulse bg-gray-200;
 }
 
 /* Custom scrollbar */
@@ -281,9 +158,65 @@ textarea:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-400 rounded-full;
+  @apply bg-gray-400;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-500;
+}
+
+/* Focus styles */
+button:focus,
+input:focus,
+textarea:focus {
+  @apply outline-none ring-2 ring-gray-300;
+}
+
+/* Text utilities */
+.text-ellipsis {
+  @apply truncate;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive helpers */
+@media (max-width: 640px) {
+  .responsive-padding {
+    @apply px-4 py-2;
+  }
+  
+  .responsive-text {
+    @apply text-sm;
+  }
+  
+  .responsive-button {
+    @apply w-full py-3;
+  }
+  
+  .responsive-grid {
+    @apply grid-cols-1;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    @apply bg-white text-black;
+  }
 }

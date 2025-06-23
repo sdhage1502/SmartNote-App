@@ -7,7 +7,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 
 import { routes } from './app.routes';
-import { firebaseConfig } from '../environments/environment';
+import { environment } from '../environments/environment';
 import { NotesStore } from './stores/notes.store';
 import { NoteService } from './services/note.service';
 import { AuthService } from './services/auth.service';
@@ -17,8 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimations(),
-    { provide: FIREBASE_OPTIONS, useValue: firebaseConfig.firebase },
-    provideFirebaseApp(() => initializeApp(firebaseConfig.firebase)),
+    { provide: FIREBASE_OPTIONS, useValue: environment.firebase },
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => {
       const firestore = initializeFirestore(getApp(), {
         experimentalAutoDetectLongPolling: true,
