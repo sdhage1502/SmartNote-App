@@ -18,13 +18,8 @@ const firebase = {
   appId: env.NG_APP_FIREBASE_APP_ID,
 };
 
-
 const writeEnvFile = (targetPath, isProd) => {
   const content = `export const environment = ${JSON.stringify({ production: isProd, firebase }, null, 2)};\n`;
-  const dir = path.dirname(targetPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
   fs.writeFileSync(targetPath, content);
 };
 
