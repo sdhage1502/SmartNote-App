@@ -1,10 +1,11 @@
-export const firebaseConfig = {
-  firebase: {
-    apiKey: "AIzaSyAiQHqHzRBBFpqLjkVE69-tjDz1jJ4WHQI",
-  authDomain: "journeyflow-ba2ub.firebaseapp.com",
-  projectId: "journeyflow-ba2ub",
-  storageBucket: "journeyflow-ba2ub.firebasestorage.app",
-  messagingSenderId: "133584785454",
-  appId: "1:133584785454:web:02c4e8d891dfd3fd1d0fbf"
-  },
+export const environment = {
+  "production": false,
+  "firebase": {
+    "apiKey": "AIzaSyDFsvw0ZpmTN3w0JPHYG3uUGiwY0r9m7zM",
+    "authDomain": "smartnoteapp-768e4.firebaseapp.com",
+    "projectId": "smartnoteapp-768e4",
+    "storageBucket": "jsmartnoteapp-768e4.firebasestorage.app",
+    "messagingSenderId": "391750140768",
+    "appId": "1:391750140768:web:b8aed4410bb41f8a0b9405"
+  }
 };

@@ -10,17 +10,20 @@
       </div>
     </a>
     <nav class="flex items-center space-x-4">
-      @if (isOnline$ | async) {
-        <span class="text-sm flex items-center text-gray-300">
-          <i class="pi pi-wifi mr-1"></i>
-          Online
-        </span>
-      }
+      <span
+        *ngIf="isOnline()"
+        class="text-sm flex items-center text-gray-300"
+      >
+        <i class="pi pi-wifi mr-1"></i>
+        Online
+      </span>
       <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-medium">
-          {{ (userName$ | async)?.charAt(0) }}
+        <div
+          class="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-medium"
+        >
+          {{ userName().charAt(0) }}
         </div>
-        <span class="text-sm hidden sm:inline">{{ userName$ | async }}</span>
+        <span class="text-sm hidden sm:inline">{{ userName() }}</span>
         <button
           (click)="signOut()"
           class="p-2 hover:bg-gray-800 rounded transition-colors"

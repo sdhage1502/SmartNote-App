@@ -1,27 +1,40 @@
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { Auth, onAuthStateChanged, signInAnonymously, signOut, User } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  user$: Observable<any>;
+  private auth = inject(Auth);
+  private _user = signal<User | null>(null);
 
-  constructor(private auth: AngularFireAuth) {
-    this.user$ = this.auth.user;
+  // Readonly signal for components to consume
+  readonly user = computed(() => this._user());
+  readonly isAuthenticated = computed(() => !!this._user());
+
+  constructor() {
+    // Listen to auth state
+    onAuthStateChanged(this.auth, (user) => {
+      this._user.set(user);
+    });
   }
 
   async signInAnonymously(): Promise<void> {
-    await this.auth.signInAnonymously();
+    await signInAnonymously(this.auth);
   }
 
   async signOut(): Promise<void> {
-    await this.auth.signOut();
+    await signOut(this.auth);
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.user$.pipe(map((user) => !!user));
+  // For reactive use in components (optional)
+  user$(): Observable<User | null> {
+    return new Observable((observer) => {
+      const unsubscribe = onAuthStateChanged(this.auth, (user) => {
+        observer.next(user);
+      });
+      return { unsubscribe };
+    });
   }
 }
